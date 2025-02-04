@@ -34,7 +34,7 @@ public class UserMealsUtil {
         for (UserMeal meal : meals) {
             LocalTime timeMeal = meal.getDateTime().toLocalTime();
             LocalDate dateMeal = meal.getDateTime().toLocalDate();
-            if (timeMeal.compareTo(startTime) >= 0 && timeMeal.compareTo(endTime) < 0) {
+            if (TimeUtil.isBetweenHalfOpen(timeMeal,startTime,endTime)) {
                 int countDayCalorie = 0;
                 for (UserMeal mealDay : meals) {
                     if (mealDay.getDateTime().toLocalDate().equals(dateMeal)) {
@@ -58,7 +58,7 @@ public class UserMealsUtil {
         meals.forEach(meal -> {
             LocalTime timeMeal = meal.getDateTime().toLocalTime();
             LocalDate dateMeal = meal.getDateTime().toLocalDate();
-            if (timeMeal.compareTo(startTime) >= 0 && timeMeal.compareTo(endTime) < 0) {
+            if (TimeUtil.isBetweenHalfOpen(timeMeal, startTime,endTime)) {
                 int countDayCalorie = meals.stream().filter(mealDay -> mealDay.getDateTime().toLocalDate().equals(dateMeal)).mapToInt(UserMeal::getCalories).sum();
                 UserMealWithExcess mealWithExcess = new UserMealWithExcess(
                         meal.getDateTime(),
