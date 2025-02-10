@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,11 +22,15 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
     
-    private static final Integer CALORIES_PER_DAY = 2000;
+    private static final Integer CALORIES_COUNT = 2000;
     
-    private  List<Meal> meals;
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     
-    public MealServlet() {
+    private List<Meal> meals;
+    
+    @Override
+    public void init() throws ServletException {
+        log.debug("init Meals");
         meals = Arrays.asList(
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
@@ -40,8 +45,9 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("redirect to Meals");
-        List<MealTo> mealsTo = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
+        List<MealTo> mealsTo = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, CALORIES_COUNT);
         request.setAttribute("mealsTo", mealsTo);
+        request.setAttribute("dateTimeFormatter", DATE_TIME_FORMATTER);
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
     }
 }
