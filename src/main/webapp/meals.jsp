@@ -8,7 +8,7 @@
 <h3><a href="index.html">Домой</a></h3>
 <hr>
 <h2>Список еды</h2>
-<p><a href="mealsList?action=insert">Добавить</a></p>
+<p><a href="meals?action=insert">Добавить</a></p>
 <table width="600 px">
     <tr>
         <th>Дата/Время</th>
@@ -24,8 +24,8 @@
             <td>${meal.dateTime.format(dateTimeFormatter)}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
-            <td><a href="mealsList?action=edit&mealId=${meal.id}">Редактировать</a></td>
-            <td><a href="mealsList?action=delete&mealId=${meal.id}">Удалить</a></td>
+            <td><a href="meals?action=edit&mealId=${meal.id}">Редактировать</a></td>
+            <td><a href="meals?action=delete&mealId=${meal.id}">Удалить</a></td>
         </tr>
     </c:forEach>
 </table>
