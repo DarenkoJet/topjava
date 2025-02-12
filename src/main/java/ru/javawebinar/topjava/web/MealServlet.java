@@ -60,7 +60,7 @@ public class MealServlet extends HttpServlet {
                 return;
             case "edit":
                 forward = INSERT_OR_EDIT;
-                request.setAttribute("meal", mealsService.getAll().stream().filter(m -> m.getId() == Integer.parseInt(request.getParameter("mealId"))).findFirst().orElse(null));
+                request.setAttribute("meal", mealsService.get(Integer.parseInt(request.getParameter("mealId"))));
                 break;
             case "insert":
                 forward = INSERT_OR_EDIT;
@@ -82,15 +82,14 @@ public class MealServlet extends HttpServlet {
         int calories = Integer.parseInt(request.getParameter("calories"));
         String description = request.getParameter("description");
         LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("datetime"));
-        String mealId = request.getParameter("mealid");
+        String mealId = request.getParameter("mealId");
         if (mealId == null || mealId.isEmpty()) {
             mealsService.add(dateTime, description, calories);
         } else {
-            Meal updatedMeal = new Meal(Integer.parseInt(mealId),
+            mealsService.update(Integer.parseInt(mealId),
                     dateTime,
                     description,
                     calories);
-            mealsService.update(updatedMeal);
         }
         response.sendRedirect(request.getRequestURL().toString());
     }

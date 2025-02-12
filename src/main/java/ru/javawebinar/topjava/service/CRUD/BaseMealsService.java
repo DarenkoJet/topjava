@@ -10,7 +10,7 @@ public interface BaseMealsService {
     
     List<Meal> getAll();
     
-    Meal update(Meal updatedMeal);
+    Meal update(int id, LocalDateTime dateTime, String description, int calories);
     
     void delete(int id);
 }

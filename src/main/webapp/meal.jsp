@@ -11,8 +11,8 @@
 <h2><%= action %> еду</h2>
 
 <jsp:useBean id="meal" scope="request" type="ru.javawebinar.topjava.model.Meal"/>
-<form method="POST" action='meal' name="frmAddMeal">
-    <!--ID : <input type="number" name="mealid" value="${meal.id}" readonly/> <br/>-->
+<form method="POST" action='meals' name="frmAddMeal">
+    <label>ID : <input type="number" name="mealId" value="${meal.id}" readonly/></label><br/>
     <label>Дата/Время: <input type="datetime-local" name="datetime" value="${meal.dateTime}"/></label><br/>
     <label>Описание: <input type="text" name="description" value="${meal.description}"/></label><br/>
     <label>Калории: <input type="number" name="calories" value="${meal.calories}"/></label><br/>
