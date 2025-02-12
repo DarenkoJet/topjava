@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.web;
 import org.slf4j.Logger;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.CRUD.MealsService;
+import ru.javawebinar.topjava.service.CRUD.StorageMemoryMealsService;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.RequestDispatcher;
@@ -15,6 +16,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -29,18 +32,22 @@ public class MealServlet extends HttpServlet {
     
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     
-    private final MealsService mealsService = new MealsService();
+    private MealsService mealsService;
     
     @Override
     public void init() {
+        mealsService = new StorageMemoryMealsService();
         log.debug("init Meals");
-        mealsService.add(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500);
-        mealsService.add(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000);
-        mealsService.add(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500);
-        mealsService.add(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100);
-        mealsService.add(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000);
-        mealsService.add(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500);
-        mealsService.add(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410);
+        List<Meal> meals = Arrays.asList(
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
+                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
+        );
+        meals.forEach(meal -> mealsService.add(meal));
     }
     
     @Override
@@ -56,7 +63,7 @@ public class MealServlet extends HttpServlet {
                 mealsService.delete(mealId);
                 request.setAttribute("mealsTo", MealsUtil.filteredByStreams(mealsService.getAll(), LocalTime.MIN, LocalTime.MAX, CALORIES_COUNT));
                 request.setAttribute("dateTimeFormatter", DATE_TIME_FORMATTER);
-                response.sendRedirect(request.getRequestURL().toString());
+                response.sendRedirect(request.getRequestURI());
                 return;
             case "edit":
                 forward = INSERT_OR_EDIT;
@@ -83,14 +90,13 @@ public class MealServlet extends HttpServlet {
         String description = request.getParameter("description");
         LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("datetime"));
         String mealId = request.getParameter("mealId");
+        Meal meal = new Meal(dateTime, description, calories);
         if (mealId == null || mealId.isEmpty()) {
-            mealsService.add(dateTime, description, calories);
+            mealsService.add(meal);
         } else {
-            mealsService.update(Integer.parseInt(mealId),
-                    dateTime,
-                    description,
-                    calories);
+            meal.setId(Integer.parseInt(mealId));
+            mealsService.update(meal);
         }
-        response.sendRedirect(request.getRequestURL().toString());
+        response.sendRedirect(request.getRequestURI());
     }
 }
