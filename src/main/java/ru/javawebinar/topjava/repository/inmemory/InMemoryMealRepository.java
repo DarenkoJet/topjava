@@ -19,14 +19,13 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
     
     {
-        MealsUtil.meals.stream().filter(meal -> meal.getCalories() > 500).forEach(meal -> save(meal, 1));
-        MealsUtil.meals.stream().filter(meal -> meal.getCalories() <= 500).forEach(meal -> save(meal, 2));
+        MealsUtil.userToMealsMap.get(1).forEach(meal -> save(meal, 1));
+        MealsUtil.userToMealsMap.get(2).forEach(meal -> save(meal, 2));
     }
     
     @Override
     public Meal save(Meal meal, int userId) {
-        usersToMealsMap.putIfAbsent(userId, new ConcurrentHashMap<>());
-        Map<Integer, Meal> mealsMap = usersToMealsMap.get(userId);
+        Map<Integer, Meal> mealsMap = usersToMealsMap.computeIfAbsent(userId, map -> new ConcurrentHashMap<>());
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             meal.setUserId(userId);
@@ -38,24 +37,27 @@ public class InMemoryMealRepository implements MealRepository {
     
     @Override
     public boolean delete(int id, int userId) {
-        if (usersToMealsMap.get(userId) != null) {
-            return usersToMealsMap.get(userId).remove(id) != null;
+        Map<Integer, Meal> mealMap = usersToMealsMap.get(userId);
+        if (mealMap != null) {
+            return mealMap.remove(id) != null;
         }
         return false;
     }
     
     @Override
     public Meal get(int id, int userId) {
-        if (usersToMealsMap.get(userId) != null) {
-            return usersToMealsMap.get(userId).get(id);
+        Map<Integer, Meal> mealMap = usersToMealsMap.get(userId);
+        if (mealMap != null) {
+            return mealMap.get(id);
         }
         return null;
     }
     
     @Override
     public List<Meal> getAll(int userId) {
-        if (usersToMealsMap.get(userId) != null) {
-            return usersToMealsMap.get(userId).values()
+        Map<Integer, Meal> mealMap = usersToMealsMap.get(userId);
+        if (mealMap != null) {
+            return mealMap.values()
                     .stream()
                     .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                     .collect(Collectors.toList());

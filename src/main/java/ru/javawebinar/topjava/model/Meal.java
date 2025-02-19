@@ -51,8 +51,8 @@ public class Meal extends AbstractBaseEntity {
         return userId;
     }
     
-    public void setUserId(Integer userID) {
-        this.userId = userID;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
     
     @Override
