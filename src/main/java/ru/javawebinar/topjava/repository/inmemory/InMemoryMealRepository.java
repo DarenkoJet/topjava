@@ -2,16 +2,10 @@ package ru.javawebinar.topjava.repository.inmemory;
 
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -22,19 +16,17 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
     
     {
-        MealsUtil.meals.forEach(meal -> save(meal, SecurityUtil.authUserId()));
+        MealsUtil.meals.stream().filter(meal -> meal.getCalories() > 500).forEach(meal -> save(meal, 1));
+        MealsUtil.meals.stream().filter(meal -> meal.getCalories() <= 500).forEach(meal -> save(meal, 2));
     }
     
     @Override
-    public Meal save(Meal meal, Integer userID) {
-        if (!usersToMealsMap.containsKey(userID)) {
-            Map<Integer, Meal> mealsMap = new ConcurrentHashMap<>();
-            usersToMealsMap.put(userID, mealsMap);
-        }
-        Map<Integer, Meal> mealsMap = usersToMealsMap.get(userID);
+    public Meal save(Meal meal, int userId) {
+        usersToMealsMap.putIfAbsent(userId, new ConcurrentHashMap<>());
+        Map<Integer, Meal> mealsMap = usersToMealsMap.get(userId);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            meal.setUser(userID);
+            meal.setUserId(userId);
             mealsMap.put(meal.getId(), meal);
             return meal;
         }
@@ -42,24 +34,30 @@ public class InMemoryMealRepository implements MealRepository {
     }
     
     @Override
-    public boolean delete(int id, Integer userID) {
-        return usersToMealsMap.get(userID).remove(id) != null;
+    public boolean delete(int id, int userId) {
+        if(usersToMealsMap.get(userId) != null) {
+            return usersToMealsMap.get(userId).remove(id) != null;
+        }
+        return false;
     }
     
     @Override
-    public Meal get(int id, Integer userID) {
-        return usersToMealsMap.get(userID).getOrDefault(id, null);
+    public Meal get(int id, int userId) {
+        if(usersToMealsMap.get(userId) != null) {
+            return usersToMealsMap.get(userId).get(id);
+        }
+        return null;
     }
     
     @Override
-    public Collection<Meal> getAll(Integer userID) {
-        if (usersToMealsMap.containsKey(userID)) {
-            return usersToMealsMap.get(userID).values()
+    public List<Meal> getAll(int userId) {
+        if (usersToMealsMap.get(userId) != null) {
+            return usersToMealsMap.get(userId).values()
                     .stream()
                     .sorted(Comparator.comparing(Meal::getDateTime))
                     .collect(Collectors.toList());
         } else {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
     }
 }

@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.service;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,24 +18,24 @@ public class MealService {
         this.repository = repository;
     }
     
-    public Meal create(Meal meal) {
-        return repository.save(meal, SecurityUtil.authUserId());
+    public Meal create(Meal meal, Integer userId) {
+        return repository.save(meal, userId);
     }
     
-    public void delete(int id) {
-        checkNotFound(repository.delete(id, SecurityUtil.authUserId()), id);
+    public void delete(int id, Integer userId) {
+        checkNotFound(repository.delete(id, userId), id);
     }
     
-    public Meal get(int id) {
-        return checkNotFound(repository.get(id, SecurityUtil.authUserId()), id);
+    public Meal get(int id, Integer userId) {
+        return checkNotFound(repository.get(id, userId), id);
     }
     
-    public List<Meal> getAll() {
-        return new ArrayList<>(repository.getAll(SecurityUtil.authUserId()));
+    public List<Meal> getAll(Integer userId) {
+        return new ArrayList<>(repository.getAll(userId));
     }
     
-    public void update(Meal meal) {
-        checkNotFound(repository.save(meal, SecurityUtil.authUserId()), meal.getId());
+    public void update(Meal meal, Integer userId) {
+        checkNotFound(repository.save(meal, userId), meal.getId());
     }
     
 }
