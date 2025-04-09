@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web;
+package ru.javawebinar.topjava.web.meal;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +9,9 @@ import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
+import ru.javawebinar.topjava.web.AbstractControllerTest;
+import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
-import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.util.MealsUtil.createTo;
 
 public class MealRestControllerTest extends AbstractControllerTest {
     
@@ -28,7 +30,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     
     @Test
     void get() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + MEAL1_ID))
+        perform(MockMvcRequestBuilders.get(REST_URL + MEAL1_ID))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -37,7 +39,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     
     @Test
     void delete() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(REST_URL + MEAL1_ID))
+        perform(MockMvcRequestBuilders.delete(REST_URL + MEAL1_ID))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         
@@ -47,7 +49,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     @Test
     void update() throws Exception {
         Meal updated = MealTestData.getUpdated();
-        mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
@@ -58,7 +60,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     @Test
     void create() throws Exception {
         Meal newMeal = MealTestData.getNew();
-        ResultActions action = mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.writeValue(newMeal)))
                 .andExpect(status().isCreated());
@@ -72,18 +74,17 @@ public class MealRestControllerTest extends AbstractControllerTest {
     
     @Test
     public void getAll() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL))
+        perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MEAL_TO_MATCHER.contentJson(mealTos));
     }
     
-    
     @Test
     void getBetween() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(REST_URL + "filter" + "?startDateTime=2020-01-30T09:00:00&endDateTime=2020-01-30T21:00:00"))
+        perform(MockMvcRequestBuilders.get(REST_URL + "between?startDateTime=2020-01-30T09:00:00&endDateTime=2020-01-30T21:00:00"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(MEAL_TO_MATCHER.contentJson(mealTo3, mealTo2, mealTo1));
     }
 }

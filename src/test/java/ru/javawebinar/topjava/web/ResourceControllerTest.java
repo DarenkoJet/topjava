@@ -11,7 +11,7 @@ class ResourceControllerTest extends AbstractControllerTest {
     
     @Test
     void getCssStyle() throws Exception {
-        mockMvc.perform(get("/resources/css/style.css"))
+        perform(get("/resources/css/style.css"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/css;charset=UTF-8"));
