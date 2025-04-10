@@ -54,10 +54,10 @@
                     <td>${meal.calories}</td>
                     <td><a><span class="fa fa-pencil"></span></a></td>
                     <td><a class="delete"><span class="fa fa-remove"></span></a></td>
-             </tr>
-         </c:forEach>
-     </table>
- </div>
+                </tr>
+            </c:forEach>
+        </table>
+    </div>
 </div>
 
 <div class="modal fade" tabindex="-1" id="editRow">
@@ -78,14 +78,15 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="description" class="col-form-label"><spring:message code="meal.description"/></label>
+                        <label for="description" class="col-form-label"><spring:message
+                                code="meal.description"/></label>
                         <input type="text" class="form-control" id="description" name="description"
                                placeholder="<spring:message code="meal.description"/>">
                     </div>
 
                     <div class="form-group">
                         <label for="calories" class="col-form-label"><spring:message code="meal.calories"/></label>
-                        <input type="number" class="form-control" id="calories" name="calories"
+                        <input type="number" class="form-control" id="calories" name="calories" min="10" max="5000"
                                placeholder="<spring:message code="meal.calories"/>">
                     </div>
                 </form>
