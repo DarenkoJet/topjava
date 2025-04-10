@@ -11,7 +11,7 @@
 
 <div class="jumbotron pt-4">
     <div class="container">
-        <h3 class="text-center"><spring:message code="user.title"/></h3>
+        <h3 class="text-center"><spring:message code="meal.title"/></h3>
         <form method="get" action="meals/filter">
             <dl>
                 <dt><spring:message code="meal.startDate"/>:</dt>

@@ -1,8 +1,8 @@
-const userAjaxUrl = "admin/meals/";
+const mealAjaxUrl = "user/meals/";
 
 // https://stackoverflow.com/a/5064235/548473
 const ctx = {
-    ajaxUrl: userAjaxUrl
+    ajaxUrl: mealAjaxUrl
 };
 
 // $(document).ready(function () {
