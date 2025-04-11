@@ -22,7 +22,7 @@ class RootControllerTest extends AbstractControllerTest {
                 .andExpect(view().name("users"))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/users.jsp"));
     }
-
+    
     @Test
     void unAuth() throws Exception {
         perform(get("/users"))
@@ -40,5 +40,12 @@ class RootControllerTest extends AbstractControllerTest {
                 .andExpect(view().name("meals"))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"))
                 .andExpect(model().attribute("meals", getTos(meals, SecurityUtil.authUserCaloriesPerDay())));
+    }
+    
+    @Test
+    void unauthorizedAccess() throws Exception {
+        perform(get("/meals"))
+                .andDo(print())
+                .andExpect(status().isMovedTemporarily());
     }
 }

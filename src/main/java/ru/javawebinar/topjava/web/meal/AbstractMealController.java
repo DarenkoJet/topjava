@@ -7,7 +7,9 @@ import org.springframework.lang.Nullable;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.UsersUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
@@ -47,6 +49,13 @@ public abstract class AbstractMealController {
         checkIsNew(meal);
         return service.create(meal, userId);
     }
+    
+    public Meal create(MealTo mealTo) {
+        int userId = SecurityUtil.authUserId();
+        log.info("create {} for user {}", mealTo, userId);
+        checkIsNew(mealTo);
+        return service.create(MealsUtil.createNewFromTo(mealTo), userId);
+    }
 
     public void update(Meal meal, int id) {
         int userId = SecurityUtil.authUserId();
@@ -54,7 +63,14 @@ public abstract class AbstractMealController {
         assureIdConsistent(meal, id);
         service.update(meal, userId);
     }
-
+    
+    public void update(MealTo mealTo, int id) {
+        int userId = SecurityUtil.authUserId();
+        log.info("update {} for user {}", mealTo, userId);
+        assureIdConsistent(mealTo, id);
+        service.update(MealsUtil.createNewFromTo(mealTo), userId);
+    }
+    
     /**
      * <ol>Filter separately
      * <li>by date</li>
