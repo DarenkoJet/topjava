@@ -46,6 +46,7 @@ class RootControllerTest extends AbstractControllerTest {
     void unauthorizedAccess() throws Exception {
         perform(get("/meals"))
                 .andDo(print())
-                .andExpect(status().isMovedTemporarily());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/login"));
     }
 }

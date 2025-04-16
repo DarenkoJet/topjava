@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class MealTo extends BaseTo implements Serializable {
+public class MealTo extends BaseTo {
    
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -23,9 +23,9 @@ public class MealTo extends BaseTo implements Serializable {
     
     @NotNull
     @Range(min = 10, max = 5000)
-    private Integer calories;
+    private int calories;
 
-    private Boolean excess;
+    private boolean excess;
     
     public MealTo() {
     }
@@ -63,7 +63,7 @@ public class MealTo extends BaseTo implements Serializable {
         this.calories = calories;
     }
 
-    public Boolean getExcess() {
+    public boolean getExcess() {
         return excess;
     }
 
