@@ -7,7 +7,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.web.result.ResultUtil;
 
@@ -15,7 +14,6 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/profile/meals", produces = MediaType.APPLICATION_JSON_VALUE)

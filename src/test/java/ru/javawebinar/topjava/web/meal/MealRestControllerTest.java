@@ -24,7 +24,6 @@ import static ru.javawebinar.topjava.UserTestData.*;
 import static ru.javawebinar.topjava.util.MealsUtil.createTo;
 import static ru.javawebinar.topjava.util.MealsUtil.getTos;
 
-@Disabled
 class MealRestControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL = MealRestController.REST_URL + '/';
